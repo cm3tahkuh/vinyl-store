@@ -1,4 +1,3 @@
-# vinyl-store
 
 <div id="header" align="center">
     <h1>Магазин виниловых пластинок</h1>

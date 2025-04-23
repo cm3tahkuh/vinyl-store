@@ -15,7 +15,7 @@ export const Header: React.FC = () => {
               {pathname !== "/" ? (
                 <Link to="/">
                   <img
-                    style={{ width: "24px" }}
+                    style={{ width: "32px" }}
                     className={styles.header__logo}
                     src="logos/vinylLogo.png"
                     alt="Логотип Винил"
@@ -31,24 +31,44 @@ export const Header: React.FC = () => {
               )}
             </li>
             <li>
-              <Link className={styles.header__link} to="/">
+              <Link
+                className={`${styles.header__link} ${
+                  pathname === "/" ? styles.active : ""
+                }`}
+                to="/"
+              >
                 Главная
               </Link>
             </li>
             <li>
-              <Link className={styles.header__link} to="/catalog">
+              <Link
+                className={`${styles.header__link} ${
+                  pathname === "/catalog" ? styles.active : ""
+                }`}
+                to="/catalog"
+              >
                 Каталог
               </Link>
             </li>
           </ul>
           <ul style={{ display: "flex", gap: "20px", alignItems: "center" }}>
             <li>
-              <Link className={styles.header__link} to="/login">
+              <Link
+                className={`${styles.header__link} ${
+                  pathname === "/login" ? styles.active : ""
+                }`}
+                to="/login"
+              >
                 Войти
               </Link>
             </li>
             <li>
-              <Link className={styles.header__link} to="/register">
+              <Link
+                className={`${styles.header__link} ${
+                  pathname === "/register" ? styles.active : ""
+                }`}
+                to="/register"
+              >
                 Регистрация
               </Link>
             </li>

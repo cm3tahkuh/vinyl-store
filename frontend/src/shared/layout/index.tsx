@@ -1,11 +1,11 @@
-import { PropsWithChildren } from "react";
 import { Header } from "../../widgets/header";
+import { Outlet } from "react-router-dom";
 
-export const Layout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+export const Layout: React.FC = () => {
   return (
     <main>
       <Header />
-      {children}
+      <Outlet />
     </main>
   );
 };

@@ -5,7 +5,7 @@ export const RadixThemeProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
   return (
-    <Theme accentColor="lime" grayColor="gray">
+    <Theme accentColor="lime" appearance="light" grayColor="gray">
       {children}
       {/* <ThemePanel /> */}
     </Theme>

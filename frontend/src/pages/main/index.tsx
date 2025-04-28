@@ -1,6 +1,6 @@
 import { Container, Box, Flex } from "@radix-ui/themes";
-import { Hero } from "../../widgets/hero";
-import { HeroCards } from "../../widgets/hero/heroCards";
+import { Hero } from "@widgets/hero";
+import { HeroCards } from "@widgets/hero/heroCards";
 
 export const Main: React.FC = () => {
   return (

@@ -5,6 +5,7 @@ import { Catalog } from "@pages/catalog";
 import { Authorization } from "@pages/authorization";
 import { AdminPanel } from "@pages/adminpanel";
 
+
 export const routes: RouteObject[] = [
   {
     path: "/",
@@ -21,6 +22,10 @@ export const routes: RouteObject[] = [
       {
         path: "auth",
         element: <Authorization />,
+      },
+      {
+        path: "cart",
+        element: "cart",
       },
     ],
   },

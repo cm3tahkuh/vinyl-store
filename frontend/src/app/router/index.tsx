@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
-import { Main } from "../../pages/main";
-import { Layout } from "../../shared/layout";
+import { Main } from "@pages/main";
+import { Layout } from "@shared/layout";
+import { Catalog } from "@pages/catalog";
 
 export const routes: RouteObject[] = [
   {
@@ -13,7 +14,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: "catalog",
-        element: "catalog",
+        element: <Catalog />,
       },
       {
         path: "login",
@@ -22,6 +23,10 @@ export const routes: RouteObject[] = [
       {
         path: "register",
         element: "register",
+      },
+      {
+        path: "cart",
+        element: "cart",
       },
     ],
   },

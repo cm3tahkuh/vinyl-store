@@ -2,6 +2,8 @@ import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { Main } from "@pages/main";
 import { Layout } from "@shared/layout";
 import { Catalog } from "@pages/catalog";
+import { Authorization } from "@pages/authorization";
+import { AdminPanel } from "@pages/adminpanel";
 
 export const routes: RouteObject[] = [
   {
@@ -17,18 +19,14 @@ export const routes: RouteObject[] = [
         element: <Catalog />,
       },
       {
-        path: "login",
-        element: "login",
-      },
-      {
-        path: "register",
-        element: "register",
-      },
-      {
-        path: "cart",
-        element: "cart",
+        path: "auth",
+        element: <Authorization />,
       },
     ],
+  },
+  {
+    path: "/admin",
+    element: <AdminPanel />,
   },
 ];
 

@@ -1,4 +1,6 @@
-import { Box, Text, Heading, Flex } from "@radix-ui/themes";
+
+import { Card, Text, Heading, Flex } from "@radix-ui/themes";
+
 
 interface CardProps {
   title: string;
@@ -8,7 +10,7 @@ interface CardProps {
   image: string;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const CardProduct: React.FC<CardProps> = ({
   title,
   description,
   price,
@@ -16,16 +18,23 @@ export const Card: React.FC<CardProps> = ({
   image,
 }) => {
   return (
-    <Flex direction="column" maxWidth="200px">
-      <img
-        style={{ maxWidth: "300px", maxHeight: "300px", marginBottom: "20px" }}
-        src={image}
-        alt={title}
-      />
-      <Heading style={{ marginBottom: "10px" }}>{title}</Heading>
-      <Text as="p">{description}</Text>
-      <Text as="span">Цена: {price}</Text>
-      <Text as="span">Количество: {quantity}</Text>
-    </Flex>
+    <Card variant="classic">
+      <Flex direction="column" maxWidth="200px">
+        <img
+          style={{
+            maxWidth: "300px",
+            maxHeight: "300px",
+            marginBottom: "20px",
+          }}
+          src={image}
+          alt={title}
+        />
+        <Heading style={{ marginBottom: "10px" }}>{title}</Heading>
+        <Text as="p">{description}</Text>
+        <Text as="span">Цена: {price}</Text>
+        <Text as="span">Количество: {quantity}</Text>
+      </Flex>
+    </Card>
+
   );
 };

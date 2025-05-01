@@ -57,19 +57,9 @@ export const Header: React.FC = () => {
                 className={`${styles.header__link} ${
                   pathname === "/login" ? styles.active : ""
                 }`}
-                to="/login"
+                to="/auth"
               >
-                Войти
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={`${styles.header__link} ${
-                  pathname === "/register" ? styles.active : ""
-                }`}
-                to="/register"
-              >
-                Регистрация
+                Вход / Регистрация
               </Link>
             </li>
           </ul>

@@ -1,5 +1,5 @@
 import { Box, Container, Flex } from "@radix-ui/themes";
-import { Card } from "@widgets/card";
+import { CardProduct } from "@widgets/card";
 import { Filters } from "@widgets/filters";
 import { Search } from "@widgets/search";
 import { useState } from "react";
@@ -19,7 +19,7 @@ export const Catalog: React.FC = () => {
             <Flex wrap="wrap" gap="20px" justify="between">
               {data.map((p, i) => (
                 <div key={i}>
-                  <Card
+                  <CardProduct
                     title="Product"
                     description="Best album."
                     price={100}

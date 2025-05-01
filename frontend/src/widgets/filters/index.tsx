@@ -1,4 +1,4 @@
-import { Box, SegmentedControl } from "@radix-ui/themes";
+import { Box, Flex, SegmentedControl } from "@radix-ui/themes";
 import { useState } from "react";
 import { Slider } from "radix-ui";
 import styles from "./filters.module.scss";
@@ -10,7 +10,7 @@ export const Filters = () => {
     setValue(newValue);
   };
   return (
-    <Box>
+    <Flex direction="column" gap="5">
       <SegmentedControl.Root variant="surface" defaultValue="new">
         <SegmentedControl.Item value="new">Новое</SegmentedControl.Item>
         <SegmentedControl.Item value="old">Старое</SegmentedControl.Item>
@@ -22,7 +22,7 @@ export const Filters = () => {
           min={0}
           max={20000}
           step={1}
-          aria-label="Price range"
+          aria-label="Диапазон цены"
           className={styles.sliderRoot}
         >
           <Slider.Track className={styles.sliderTrack}>
@@ -36,6 +36,6 @@ export const Filters = () => {
           <span>Цена: {value[0]}</span> ₽ - <span>{value[1]} ₽</span>
         </div>
       </Box>
-    </Box>
+    </Flex>
   );
 };

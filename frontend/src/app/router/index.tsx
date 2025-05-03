@@ -4,6 +4,7 @@ import { Layout } from "@shared/layout";
 import { Catalog } from "@pages/catalog";
 import { Authorization } from "@pages/authorization";
 import { AdminPanel } from "@pages/adminpanel";
+import { CartPage } from "@pages/cartpage";
 
 
 export const routes: RouteObject[] = [
@@ -25,7 +26,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: "cart",
-        element: "cart",
+        element: <CartPage/>,
       },
     ],
   },

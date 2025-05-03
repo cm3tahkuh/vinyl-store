@@ -1,10 +1,12 @@
 import React from "react";
-import { Flex, Box, Container } from "@radix-ui/themes";
+import { Flex, Box, Container, Text } from "@radix-ui/themes";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./header.module.scss";
+import { useState } from "react";
 
 export const Header: React.FC = () => {
   const { pathname } = useLocation();
+  const [user, setUser] = useState<string>("user!!!");
 
   return (
     <Box>
@@ -52,16 +54,40 @@ export const Header: React.FC = () => {
             </li>
           </ul>
           <ul style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-            <li>
-              <Link
-                className={`${styles.header__link} ${
-                  pathname === "/login" ? styles.active : ""
-                }`}
-                to="/auth"
-              >
-                Вход / Регистрация
-              </Link>
-            </li>
+            {user ? (
+              <>
+                <li>
+                  <Link
+                    className={`${styles.header__link} ${
+                      pathname === "/cart" ? styles.active : ""
+                    }`}
+                    to="/cart"
+                  >
+                    🛒
+                  </Link>
+                </li>
+                <li>
+                  <Text
+                    className={`${styles.header__link} `}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setUser("")}
+                  >
+                    Выйти
+                  </Text>
+                </li>
+              </>
+            ) : (
+              <li>
+                <Link
+                  className={`${styles.header__link} ${
+                    pathname === "/login" ? styles.active : ""
+                  }`}
+                  to="/auth"
+                >
+                  Вход / Регистрация
+                </Link>
+              </li>
+            )}
           </ul>
         </Flex>
       </Container>

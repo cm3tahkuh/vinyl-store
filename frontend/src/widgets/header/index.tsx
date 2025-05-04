@@ -2,11 +2,14 @@ import React from "react";
 import { Flex, Box, Container, Text } from "@radix-ui/themes";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./header.module.scss";
-import { useState } from "react";
+
+import useUserStore from "@store/userStore";
 
 export const Header: React.FC = () => {
   const { pathname } = useLocation();
-  const [user, setUser] = useState<string>("user!!!");
+
+  const user = useUserStore((state) => state.user);
+  const logout = useUserStore((state) => state.logout);
 
   return (
     <Box>
@@ -54,7 +57,7 @@ export const Header: React.FC = () => {
             </li>
           </ul>
           <ul style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-            {user ? (
+            {user !== null ? (
               <>
                 <li>
                   <Link
@@ -70,7 +73,7 @@ export const Header: React.FC = () => {
                   <Text
                     className={`${styles.header__link} `}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setUser("")}
+                    onClick={() => logout()}
                   >
                     Выйти
                   </Text>

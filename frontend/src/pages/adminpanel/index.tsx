@@ -1,26 +1,30 @@
 import { Box, Heading, Flex, Tabs, Text } from "@radix-ui/themes";
+import useUserStore from "@store/userStore";
 import { ProductsPanel } from "@widgets/panels/productspanel";
 import { UsersPanel } from "@widgets/panels/userspanel";
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface User {
-  role: string;
-}
-
 export const AdminPanel: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    setTimeout(() => setUser({ role: "admin" }), 3000);
-  }, []);
-
+  const logout = useUserStore((state) => state.logout);
+  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     navigate("/auth");
     // очищаем кэщ
   };
+
+  if (!user || user.role.roleName === "customer") {
+    return (
+      <Heading style={{ padding: "70px 15px" }} size="9" align="center">
+        Доступ запрещен.
+      </Heading>
+    );
+  }
+
+  const isAdmin = user.role.roleName === "admin";
+
 
   return (
     <Box p="4">
@@ -31,16 +35,14 @@ export const AdminPanel: React.FC = () => {
             Выйти
           </Text>
         ) : (
-          <Text style={{ cursor: "pointer" }}>
-            Войти
-          </Text>
+          <Text style={{ cursor: "pointer" }}>Войти</Text>
         )}
       </Flex>
 
-      <Tabs.Root defaultValue="products">
+      <Tabs.Root defaultValue={isAdmin ? "users" : "products"}>
         <Tabs.List>
           <Tabs.Trigger value="products">Товары</Tabs.Trigger>
-          <Tabs.Trigger value="users">Пользователи</Tabs.Trigger>
+          {isAdmin && <Tabs.Trigger value="users">Пользователи</Tabs.Trigger>}
         </Tabs.List>
 
         <Box pt="3">
@@ -49,9 +51,11 @@ export const AdminPanel: React.FC = () => {
               <ProductsPanel />
             </Tabs.Content>
 
-            <Tabs.Content value="users">
-              <UsersPanel />
-            </Tabs.Content>
+            {isAdmin && (
+              <Tabs.Content value="users">
+                <UsersPanel />
+              </Tabs.Content>
+            )}
           </Box>
         </Box>
       </Tabs.Root>

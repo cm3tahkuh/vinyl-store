@@ -1,12 +1,21 @@
 import { RadixThemeProvider } from "./theme";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
-import React from "react";
+import { TanStackProvider } from "./queryProvider";
+import useUserStore from "@store/userStore";
+import { useEffect } from "react";
 
 const App: React.FC = () => {
+  const store = useUserStore();
+
+  useEffect(() => {
+    store.checkAuth();
+  }, []);
   return (
     <RadixThemeProvider>
-      <RouterProvider router={router} />
+      <TanStackProvider>
+        <RouterProvider router={router} />
+      </TanStackProvider>
     </RadixThemeProvider>
   );
 };

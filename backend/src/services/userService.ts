@@ -76,3 +76,13 @@ export const updateUserService = async (
 
   return updatedUser;
 };
+
+export const deleteUserService = async (id: number) => {
+  const deletedUser = await prisma.user.delete({
+    where: {
+      id: id,
+    },
+  });
+
+  return deletedUser;
+};

@@ -1,7 +1,9 @@
 import { Heading, Text, Button, Flex } from "@radix-ui/themes";
 import styles from "./hero.module.scss";
+import { useNavigate } from "react-router-dom";
 
 export const Hero: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <Flex
       direction="column"
@@ -20,12 +22,19 @@ export const Hero: React.FC = () => {
         Лучшие и качественные записи в нашем магазине
       </Text>
       <Flex gap="4">
-        <Button size="3" variant="classic">
+        <Button
+          size="3"
+          onClick={() => {
+     
+            navigate("/catalog");
+          }}
+          variant="classic"
+        >
           Купить
         </Button>
-        <Button size="3" style={{ color: "white" }} variant="soft">
+        {/* <Button size="3" style={{ color: "white" }} variant="soft">
           Подробнее
-        </Button>
+        </Button> */}
       </Flex>
     </Flex>
   );

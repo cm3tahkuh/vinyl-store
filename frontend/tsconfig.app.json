@@ -5,7 +5,9 @@
       "@styles/*": ["styles/*"],
       "@pages/*": ["pages/*"],
       "@widgets/*": ["widgets/*"],
-      "@shared/*": ["shared/*"]
+      "@shared/*": ["shared/*"],
+      "@store/*": ["store/*"],
+      "@api/*": ["api/*"]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",

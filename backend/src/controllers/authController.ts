@@ -12,6 +12,7 @@ export const registerCustomer = async (
   try {
     const { login, password } = req.body;
     const user = await registerCustomerService({ login, password });
+    res.status(200).json({ message: "Вы успешно зарегестрированы в системе!" });
   } catch (error) {
     res.status(500).json({ message: "Ошибка при регистрации пользователя" });
     console.log(error);
@@ -40,5 +41,5 @@ export const logoutCustomer = async (
   res: Response
 ): Promise<void> => {
   await logoutCustomerService();
-  res.status(200).json({message: "Вы успешно вышли из системы"})
+  res.status(200).json({ message: "Вы успешно вышли из системы" });
 };

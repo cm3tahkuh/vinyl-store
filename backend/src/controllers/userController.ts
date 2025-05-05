@@ -12,7 +12,7 @@ export const getAllUsers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const decoded = authorize(req, res, "admin");
+    const decoded = authorize(req, res, ["admin"]);
     if (!decoded) {
       return;
     }
@@ -30,14 +30,14 @@ export const createUser = async (
 ): Promise<void> => {
   try {
     const { login, password, roleName } = req.body;
-    const decoded = authorize(req, res, "admin");
+    const decoded = authorize(req, res, ["admin"]);
     if (!decoded) {
       return;
     }
 
     const user = await createUserService(login, password, roleName);
 
-    res.status(200).json(user);
+    res.status(201).json(user);
     res.json();
   } catch (error) {
     res.status(500).json({ message: "Ошибка при создании пользователя" });
@@ -52,13 +52,13 @@ export const updateUser = async (
   try {
     const { id, login, password, roleName } = req.body;
 
-    const decoded = authorize(req, res, "admin");
+    const decoded = authorize(req, res, ["admin"]);
     if (!decoded) {
-      return; 
+      return;
     }
 
     const user = await updateUserService(id, login, password, roleName);
-    res.status(200).json(user);
+    res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: "Ошибка при обновлении пользователя" });
     console.log(error);
@@ -72,14 +72,14 @@ export const deleteUser = async (
   try {
     const { id } = req.body;
 
-    const decoded = authorize(req, res, "admin");
+    const decoded = authorize(req, res, ["admin"]);
     if (!decoded) {
       return;
     }
     const user = await deleteUserService(id);
-    res.status(200).json(user);
+    res.status(201).json(user);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Ошибка при удалении пользователя" });
   }
 };

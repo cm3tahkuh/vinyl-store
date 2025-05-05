@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { verifyToken } from "./jwt";
 
-export const authorize = (req: Request, res: Response, nameRole: string) => {
+export const authorize = (
+  req: Request,
+  res: Response,
+  allowedRoles: string[]
+) => {
   const token = req.headers["authorization"] as string;
 
   if (!token) {
@@ -14,14 +18,14 @@ export const authorize = (req: Request, res: Response, nameRole: string) => {
     return res.status(403).json({ message: "Неверный токен" });
   }
 
-  if (
-    !decoded.user ||
-    !decoded.user.role ||
-    decoded.user.role.roleName !== nameRole
-  ) {
-    return res
-      .status(403)
-      .json({ message: `У вас нет прав для выполнения этой операции. Функция доступна только ${nameRole}` });
+  const userRole = decoded.user?.role?.roleName;
+
+  if (!userRole || !allowedRoles.includes(userRole)) {
+    return res.status(403).json({
+      message: `У вас нет прав для выполнения этой операции. Доступ разрешён только: ${allowedRoles.join(
+        ", "
+      )}`,
+    });
   }
 
   return decoded;

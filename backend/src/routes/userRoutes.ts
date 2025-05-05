@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", getAllUsers);
 
-router.post("/create", createUser);
+router.post("/createUser", createUser);
 
 router.put("/updateUserById", updateUser);
 

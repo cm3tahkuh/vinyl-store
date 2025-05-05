@@ -1,6 +1,4 @@
-
 import { Card, Text, Heading, Flex } from "@radix-ui/themes";
-
 
 interface CardProps {
   title: string;
@@ -30,11 +28,14 @@ export const CardProduct: React.FC<CardProps> = ({
           alt={title}
         />
         <Heading style={{ marginBottom: "10px" }}>{title}</Heading>
-        <Text as="p">{description}</Text>
-        <Text as="span">Цена: {price}</Text>
+        <Text truncate as="p">
+          {description}
+        </Text>
+        <Text as="span" color="green">
+          Цена: {price} {"₽"}
+        </Text>
         <Text as="span">Количество: {quantity}</Text>
       </Flex>
     </Card>
-
   );
 };

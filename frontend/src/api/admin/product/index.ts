@@ -1,9 +1,9 @@
 import apiConfig from "@api/routes";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-export const getAllUsers = async ({ queryKey }: QueryFunctionContext) => {
+export const getAllProducts = async ({ queryKey }: QueryFunctionContext) => {
   const [, token] = queryKey as [string, string];
-  const response = await fetch(apiConfig.users.get, {
+  const response = await fetch(apiConfig.products.get, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -12,14 +12,14 @@ export const getAllUsers = async ({ queryKey }: QueryFunctionContext) => {
   });
 
   if (!response.ok) {
-    throw new Error("Произошла ошибка получения пользователей");
+    throw new Error("Произошла ошибка получения товаров");
   }
 
   return response.json();
 };
 
-export const deleteUserById = async (id: number, token: string) => {
-  const response = await fetch(apiConfig.users.delete, {
+export const deleteProductById = async (id: number, token: string) => {
+  const response = await fetch(apiConfig.products.delete, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -34,8 +34,8 @@ export const deleteUserById = async (id: number, token: string) => {
   return response.json();
 };
 
-export const updateUserById = async (user: object, token: string) => {
-  const response = await fetch(apiConfig.users.update, {
+export const updateProductById = async (user: object, token: string) => {
+  const response = await fetch(apiConfig.products.update, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -45,14 +45,14 @@ export const updateUserById = async (user: object, token: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Произошла ошибка при обновлении пользователя");
+    throw new Error("Произошла ошибка при обновлении товара");
   }
 
   return response.json();
 };
 
-export const addNewUser = async (user: object, token: string) => {
-  const response = await fetch(apiConfig.users.create, {
+export const addNewProduct = async (user: object, token: string) => {
+  const response = await fetch(apiConfig.products.create, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export const addNewUser = async (user: object, token: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Произошла ошибка при добавлении пользователя");
+    throw new Error("Произошла ошибка при добавлении товара");
   }
 
   return response.json();

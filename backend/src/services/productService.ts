@@ -57,3 +57,39 @@ export const deleteProductService = async (id: number) => {
     },
   });
 };
+
+export const getProductsBySortingService = async ({
+  sortBy,
+  minPrice,
+  maxPrice,
+}: {
+  sortBy: string;
+  minPrice: number;
+  maxPrice: number;
+}) => {
+  try {
+    let orderByClause: { createdAt: "asc" | "desc" };
+
+    if (sortBy === "new") {
+      orderByClause = { createdAt: "desc" };
+    } else if (sortBy === "old") {
+      orderByClause = { createdAt: "asc" };
+    } else {
+      orderByClause = { createdAt: "asc" };
+    }
+
+    const products = await prisma.product.findMany({
+      where: {
+        price: {
+          gte: minPrice,
+          lte: maxPrice,
+        },
+      },
+      orderBy: orderByClause,
+    });
+    return products;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Ошибка загрузки товаров");
+  }
+};

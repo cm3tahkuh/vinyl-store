@@ -1,4 +1,9 @@
 import {
+  addNewProduct,
+  deleteProductById,
+  updateProductById,
+} from "@api/admin/product";
+import {
   Box,
   Button,
   Card,
@@ -6,41 +11,95 @@ import {
   Heading,
   DataList,
   Dialog,
-  Select,
   TextField,
   Text,
   AlertDialog,
   ContextMenu,
 } from "@radix-ui/themes";
-import { useState, useEffect } from "react";
-
-interface Rating {
-  count: number;
-}
+import useUserStore from "@store/userStore";
+import { getAllProducts } from "@api/admin/product";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface Product {
   id: number;
-  title: string;
-  price: number;
+  name: string;
   description: string;
+  price: number;
+  quantity: number;
   image: string;
-  rating: Rating;
 }
 
 export const ProductsPanel: React.FC = () => {
-  const [data, setData] = useState<Product[] | null>(null);
   const [modal, setModal] = useState<boolean>(false);
-  const [editProduct, setEditProduct] = useState<any | null>(null);
+  const [editProduct, setEditProduct] = useState<any | null>({
+    id: null,
+    name: "",
+    description: "",
+    price: 0,
+    quantity: 0,
+    image: "",
+  });
+  const [addProduct, setAddProduct] = useState<any>({
+    name: "",
+    description: "",
+    price: 0,
+    quantity: 0,
+    image: "",
+  });
+  const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
+
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("https://fakestoreapi.com/products?limit=5");
-      const data: Product[] = await response.json();
-      setData(data);
-    };
-    fetchData();
-  }, []);
+  const token = useUserStore((state) => state.token);
+
+  const queryClient = useQueryClient();
+
+  // получение товара
+  const { data } = useQuery({
+    queryKey: ["products", token],
+    queryFn: getAllProducts,
+  });
+
+  // удаление товара
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, token }: { id: number; token: string }) =>
+      deleteProductById(id, token),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
+  // обновление товара
+  const updateMutation = useMutation({
+    mutationFn: ({
+      editProduct,
+      token,
+    }: {
+      editProduct: object;
+      token: string;
+    }) => updateProductById(editProduct, token),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] }); // обновляем кэш после изменения
+    },
+  });
+
+  // добавление товара
+  const addMutation = useMutation({
+    mutationFn: ({
+      addProduct,
+      token,
+    }: {
+      addProduct: object;
+      token: string;
+    }) => addNewProduct(addProduct, token),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
 
   return (
     <>
@@ -59,31 +118,78 @@ export const ProductsPanel: React.FC = () => {
                 <Text as="div" size="2" mb="1" weight="bold">
                   Название
                 </Text>
-                <TextField.Root variant="classic" />
+                <TextField.Root
+                  variant="classic"
+                  value={addProduct?.name}
+                  onChange={(event) =>
+                    setAddProduct((prev: any) => ({
+                      ...prev,
+                      name: event.target.value,
+                    }))
+                  }
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Описание
                 </Text>
-                <TextField.Root variant="classic" />
+                <TextField.Root
+                  variant="classic"
+                  value={addProduct?.description}
+                  onChange={(event) =>
+                    setAddProduct((prev: any) => ({
+                      ...prev,
+                      description: event.target.value,
+                    }))
+                  }
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Цена
                 </Text>
-                <TextField.Root variant="classic" />
+                <TextField.Root
+                  type="number"
+                  variant="classic"
+                  value={addProduct?.price}
+                  onChange={(event) =>
+                    setAddProduct((prev: any) => ({
+                      ...prev,
+                      price: Number(event.target.value),
+                    }))
+                  }
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Количество
                 </Text>
-                <TextField.Root variant="classic" />
+                <TextField.Root
+                  type="number"
+                  variant="classic"
+                  value={addProduct?.quantity}
+                  onChange={(event) =>
+                    setAddProduct((prev: any) => ({
+                      ...prev,
+                      quantity: Number(event.target.value),
+                    }))
+                  }
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Изображение
                 </Text>
-                <TextField.Root variant="classic" />
+                <TextField.Root
+                  variant="classic"
+                  value={addProduct?.image}
+                  onChange={(event) =>
+                    setAddProduct((prev: any) => ({
+                      ...prev,
+                      image: event.target.value,
+                    }))
+                  }
+                />
               </label>
             </Flex>
 
@@ -94,7 +200,23 @@ export const ProductsPanel: React.FC = () => {
                 </Button>
               </Dialog.Close>
               <Dialog.Close>
-                <Button variant="classic">Сохранить</Button>
+                <Button
+                  variant="classic"
+                  onClick={() => {
+                    if (addProduct && token) {
+                      addMutation.mutate({ addProduct, token });
+                      setAddProduct({
+                        name: "",
+                        description: "",
+                        price: 0,
+                        quantity: 0,
+                        image: "",
+                      });
+                    }
+                  }}
+                >
+                  Сохранить
+                </Button>
               </Dialog.Close>
             </Flex>
           </Dialog.Content>
@@ -110,7 +232,13 @@ export const ProductsPanel: React.FC = () => {
                 </Text>
                 <TextField.Root
                   variant="classic"
-                  defaultValue={editProduct?.title}
+                  value={editProduct?.name}
+                  onChange={(event) =>
+                    setEditProduct((prev: any) => ({
+                      ...prev,
+                      name: event.target.value,
+                    }))
+                  }
                 />
               </label>
               <label>
@@ -119,7 +247,13 @@ export const ProductsPanel: React.FC = () => {
                 </Text>
                 <TextField.Root
                   variant="classic"
-                  defaultValue={editProduct?.description}
+                  value={editProduct?.description}
+                  onChange={(event) =>
+                    setEditProduct((prev: any) => ({
+                      ...prev,
+                      description: event.target.value,
+                    }))
+                  }
                 />
               </label>
               <label>
@@ -128,7 +262,13 @@ export const ProductsPanel: React.FC = () => {
                 </Text>
                 <TextField.Root
                   variant="classic"
-                  defaultValue={editProduct?.price}
+                  value={editProduct?.price}
+                  onChange={(event) =>
+                    setEditProduct((prev: any) => ({
+                      ...prev,
+                      price: Number(event.target.value),
+                    }))
+                  }
                 />
               </label>
               <label>
@@ -137,7 +277,13 @@ export const ProductsPanel: React.FC = () => {
                 </Text>
                 <TextField.Root
                   variant="classic"
-                  defaultValue={editProduct?.count}
+                  value={editProduct?.quantity}
+                  onChange={(event) =>
+                    setEditProduct((prev: any) => ({
+                      ...prev,
+                      quantity: Number(event.target.value),
+                    }))
+                  }
                 />
               </label>
               <label>
@@ -146,7 +292,13 @@ export const ProductsPanel: React.FC = () => {
                 </Text>
                 <TextField.Root
                   variant="classic"
-                  defaultValue={editProduct?.image}
+                  value={editProduct?.image}
+                  onChange={(event) =>
+                    setEditProduct((prev: any) => ({
+                      ...prev,
+                      image: event.target.value,
+                    }))
+                  }
                 />
               </label>
             </Flex>
@@ -158,7 +310,23 @@ export const ProductsPanel: React.FC = () => {
                 </Button>
               </Dialog.Close>
               <Dialog.Close>
-                <Button variant="classic">Изменить</Button>
+                <Button
+                  variant="classic"
+                  onClick={() => {
+                    if (editProduct && token) {
+                      updateMutation.mutate({ editProduct, token });
+                      setEditProduct({
+                        name: "",
+                        description: "",
+                        price: 0,
+                        quantity: 0,
+                        image: "",
+                      });
+                    }
+                  }}
+                >
+                  Изменить
+                </Button>
               </Dialog.Close>
             </Flex>
           </Dialog.Content>
@@ -177,7 +345,15 @@ export const ProductsPanel: React.FC = () => {
                 </Button>
               </AlertDialog.Cancel>
               <AlertDialog.Action>
-                <Button variant="classic" color="red">
+                <Button
+                  variant="classic"
+                  color="red"
+                  onClick={() => {
+                    if (deleteProductId && token) {
+                      deleteMutation.mutate({ id: deleteProductId, token });
+                    }
+                  }}
+                >
                   Удалить
                 </Button>
               </AlertDialog.Action>
@@ -187,7 +363,7 @@ export const ProductsPanel: React.FC = () => {
       </Flex>
       <Box style={{ overflowY: "auto" }}>
         <Flex gap="4" direction="column">
-          {data?.map((product) => (
+          {data?.map((product: Product) => (
             <ContextMenu.Root key={product.id}>
               <ContextMenu.Trigger>
                 <Card>
@@ -207,7 +383,7 @@ export const ProductsPanel: React.FC = () => {
                           <DataList.Label minWidth="122px">
                             Название
                           </DataList.Label>
-                          <DataList.Value>{product.title}</DataList.Value>
+                          <DataList.Value>{product.name}</DataList.Value>
                         </DataList.Item>
                         <DataList.Item>
                           <DataList.Label minWidth="122px">
@@ -225,9 +401,7 @@ export const ProductsPanel: React.FC = () => {
                           <DataList.Label minWidth="122px">
                             Количество
                           </DataList.Label>
-                          <DataList.Value>
-                            {product.rating.count}
-                          </DataList.Value>
+                          <DataList.Value>{product.quantity}</DataList.Value>
                         </DataList.Item>
                         <DataList.Item>
                           <DataList.Label minWidth="122px">
@@ -246,11 +420,11 @@ export const ProductsPanel: React.FC = () => {
                   onClick={() => {
                     setEditProduct({
                       id: product.id,
-                      title: product.title,
-                      price: product.price,
+                      name: product.name,
                       description: product.description,
+                      price: product.price,
+                      quantity: product.quantity,
                       image: product.image,
-                      count: product.rating.count,
                     });
                     setModal(true);
                   }}
@@ -261,6 +435,7 @@ export const ProductsPanel: React.FC = () => {
                 <ContextMenu.Item
                   onClick={() => {
                     setDeleteModal(true);
+                    setDeleteProductId(product.id);
                   }}
                   shortcut="⌫"
                   color="red"

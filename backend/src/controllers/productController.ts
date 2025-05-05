@@ -3,6 +3,7 @@ import {
   addProductService,
   deleteProductService,
   getAllProductsService,
+  getProductsBySortingService,
   updateProductService,
 } from "../services/productService";
 import { authorize } from "../utils/authorize";
@@ -87,5 +88,31 @@ export const deleteProduct = async (
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Произошла ошибка при удалении товара" });
+  }
+};
+
+interface ProductQuery {
+  sortBy?: string;
+  minPrice?: string;
+  maxPrice?: string;
+}
+
+export const getProductsBySorting = async (req: Request, res: Response) => {
+  const { sortBy, minPrice, maxPrice } = req.query;
+
+  const sortString = sortBy?.toString() || "new";
+  const min = minPrice ? Number(minPrice) : 0;
+  const max = maxPrice ? Number(maxPrice) : 100000;
+
+  try {
+    const products = await getProductsBySortingService({
+      sortBy: sortString,
+      minPrice: min,
+      maxPrice: max,
+    });
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Что-то пошло не так." });
   }
 };

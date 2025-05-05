@@ -3,22 +3,39 @@ import { useState } from "react";
 import { Slider } from "radix-ui";
 import styles from "./filters.module.scss";
 
-export const Filters = () => {
-  const [value, setValue] = useState<Array<number>>([25, 20000]);
+interface FiltersProps {
+  onChange: (priceRange: number[], condition: string) => void;
+}
 
-  const handleChange = (newValue: Array<number>) => {
+export const Filters: React.FC<FiltersProps> = ({ onChange }) => {
+  const [value, setValue] = useState<Array<number>>([0, 20000]);
+  const [condition, setCondition] = useState<string>("new");
+
+  const handlePriceChange = (newValue: Array<number>) => {
     setValue(newValue);
+    onChange(newValue, condition); // Обновляем фильтры
   };
+
+  const handleConditionChange = (newCondition: string) => {
+    onChange(value, newCondition);
+    setCondition(newCondition);
+  // Обновляем фильтры
+  };
+
   return (
     <Flex direction="column" gap="5">
-      <SegmentedControl.Root variant="surface" defaultValue="new">
+      <SegmentedControl.Root
+        onValueChange={handleConditionChange}
+        variant="surface"
+        value={condition}
+      >
         <SegmentedControl.Item value="new">Новое</SegmentedControl.Item>
         <SegmentedControl.Item value="old">Старое</SegmentedControl.Item>
       </SegmentedControl.Root>
       <Box>
         <Slider.Root
           value={value}
-          onValueChange={handleChange}
+          onValueChange={handlePriceChange}
           min={0}
           max={20000}
           step={1}

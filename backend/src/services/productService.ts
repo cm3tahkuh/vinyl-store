@@ -89,6 +89,10 @@ export const getProductsBySortingService = async ({
       };
     }
 
+    whereClause.quantity = {
+      gt: 0,
+    };
+
     const products = await prisma.product.findMany({
       where: whereClause,
       orderBy: orderByClause,

@@ -3,7 +3,6 @@ import { PrismaClient } from "../generated/prisma";
 const prisma = new PrismaClient();
 
 export const getAllUsersService = async () => {
-
   return await prisma.user.findMany({
     select: {
       id: true,
@@ -27,16 +26,29 @@ export const createUserService = async (
   const role = await prisma.role.findUnique({ where: { roleName: roleName } });
 
   if (!role) {
-    throw new Error(`Роль ${role} не существует.`);
+    throw new Error(`Роль ${roleName} не существует.`);
   }
 
-  return await prisma.user.create({
+  // 2. Создать пользователя
+  const user = await prisma.user.create({
     data: {
       login,
       password,
       roleId: role.id,
     },
   });
+
+  console.log(user);
+
+  const cart = await prisma.cart.create({
+    data: {
+      userId: user.id,
+    },
+  });
+
+  console.log(cart);
+
+  return { user, cart };
 };
 
 export const updateUserService = async (
@@ -80,6 +92,18 @@ export const updateUserService = async (
 };
 
 export const deleteUserService = async (id: number) => {
+  const cartIdToDelete = await prisma.cart.findFirst({ where: { userId: id } });
+
+  const deletedCartItems = await prisma.cartItem.deleteMany({
+    where: { cartId: cartIdToDelete?.id },
+  });
+
+  const deletedCart = await prisma.cart.delete({
+    where: {
+      userId: id,
+    },
+  });
+
   const deletedUser = await prisma.user.delete({
     where: {
       id: id,

@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -19,24 +19,25 @@ model User {
   login    String @unique
   password String
   roleId   Int
-  role     Role   @relation(fields: [roleId], references: [id])
   Cart     Cart?
   Sale     Sale[]
+  role     Role   @relation(fields: [roleId], references: [id])
 }
 
 model Cart {
   id       Int        @id @default(autoincrement())
   userId   Int        @unique
-  User     User       @relation(fields: [userId], references: [id])
+  User     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   CartItem CartItem[]
 }
 
 model CartItem {
   id        Int     @id @default(autoincrement())
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
   cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
 }
 
 model Product {
@@ -54,18 +55,18 @@ model Product {
 model Sale {
   id         Int        @id @default(autoincrement())
   userId     Int
-  user       User       @relation(fields: [userId], references: [id])
   soldAt     DateTime   @default(now())
   totalPrice Int
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   SaleItem   SaleItem[]
 }
 
 model SaleItem {
   id        Int     @id @default(autoincrement())
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
   saleId    Int
-  sale      Sale    @relation(fields: [saleId], references: [id])
   quantity  Int
   price     Int
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }

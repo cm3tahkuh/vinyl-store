@@ -1,20 +1,95 @@
-import { Box, Button, Container, Flex, Heading, Text } from "@radix-ui/themes";
+import { createSale } from "@api/admin/sale";
+import { deleteCartItem, getCartByUserId } from "@api/cart";
+import {
+  Box,
+  Button,
+  Callout,
+  Container,
+  Flex,
+  Heading,
+  Text,
+} from "@radix-ui/themes";
+import useUserStore from "@store/userStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CardProduct } from "@widgets/card";
-import { useState } from "react";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
 
 export const CartPage: React.FC = () => {
-  const [user, _] = useState<string>("user");
-  const [cartItems, setCartItems] = useState<Array<number>>(
-    Array(9)
-      .fill(0)
-      .map((_, index) => index + 1)
-  );
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  if (cartItems.length === 0) {
+  const token = useUserStore((state) => state.token);
+
+  const user = useUserStore((state) => state.user);
+
+  const queryClient = useQueryClient();
+
+  // получение товара
+  const { data } = useQuery({
+    queryKey: ["cart", token],
+    queryFn: getCartByUserId,
+  });
+
+  // оформление заявки
+  const createMutation = useMutation({
+    mutationFn: ({ token }: { token: string }) => createSale(token),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  useEffect(() => {
+    if (createMutation.isSuccess) {
+      setShowSuccess(true);
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [createMutation.isSuccess]);
+
+  // удаление товара
+  const deleteMutation = useMutation({
+    mutationFn: ({ productId, token }: { productId: number; token: string }) =>
+      deleteCartItem(productId, token),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  if (!user) {
     return (
       <Heading align="center" as="h2">
-        Корзина пуста.
+        Войдите в систему для просмотра корзины.
       </Heading>
+    );
+  }
+
+  if (data?.items.length === 0) {
+    return (
+      <>
+        {showSuccess && (
+          <Callout.Root
+            style={{
+              position: "absolute",
+              bottom: 0,
+              margin: "24px",
+            }}
+            color="lime"
+          >
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text>Вы успешно оформили заказ!</Callout.Text>
+          </Callout.Root>
+        )}
+        <Heading align="center" as="h2">
+          Корзина пуста.
+        </Heading>
+      </>
     );
   }
 
@@ -24,26 +99,30 @@ export const CartPage: React.FC = () => {
         Корзина
       </Heading>
       <Text as="p" align="center" weight="medium">
-        Ваши покупки, {user}
+        Ваши покупки, {user?.login}
       </Text>
       <Box>
         <Container size="4">
           <Flex gap="5" align="center" justify="center" p="5" wrap="wrap">
-            {cartItems.map((item, index) => (
-              <Flex key={index} direction="column" gap="2">
+            {data?.items.map((product: any) => (
+              <Flex key={product.id} direction="column" gap="2">
                 <CardProduct
-                  title={item.toString()}
-                  description="rar"
-                  price={33335}
-                  quantity={1}
-                  image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmVq-OmHL5H_5P8b1k306pFddOe3049-il2A&s"
+                  title={product.name}
+                  description={product.description}
+                  price={product.price}
+                  quantity={product.quantity}
+                  image={product.image}
                 />
+
                 <Button
-                  onClick={() =>
-                    setCartItems((prev) =>
-                      prev.filter((itemArray) => itemArray !== item)
-                    )
-                  }
+                  onClick={() => {
+                    if (product.id && token) {
+                      deleteMutation.mutate({
+                        productId: product.productId,
+                        token: token,
+                      });
+                    }
+                  }}
                   color="red"
                   variant="classic"
                 >
@@ -52,6 +131,22 @@ export const CartPage: React.FC = () => {
               </Flex>
             ))}
           </Flex>
+          <Button
+            variant="classic"
+            style={{
+              position: "absolute",
+              bottom: "0",
+              width: "100%",
+              padding: "24px",
+            }}
+            onClick={() => {
+              if (token) {
+                createMutation.mutate({ token: token });
+              }
+            }}
+          >
+            Оформить покупку
+          </Button>
         </Container>
       </Box>
     </Box>

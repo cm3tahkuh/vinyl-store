@@ -19,6 +19,15 @@ const apiConfig = {
     update: `${BASE_URL}/api/products/updateProductById/`,
     delete: `${BASE_URL}/api/products/deleteProductById/`,
   },
+  carts: {
+    getUserCart: `${BASE_URL}/api/carts/`,
+    addToCart: `${BASE_URL}/api/carts/addToCartByProductId/`,
+    deleteFromCart: `${BASE_URL}/api/carts/deleteFromCartByProductId/`,
+  },
+  sales: {
+    get: `${BASE_URL}/api/sales/`,
+    createSale: `${BASE_URL}/api/carts/createSaleFromCart`,
+  },
 };
 
 export default apiConfig;

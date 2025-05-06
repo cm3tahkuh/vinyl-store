@@ -1,6 +1,7 @@
 import { Box, Heading, Flex, Tabs, Text } from "@radix-ui/themes";
 import useUserStore from "@store/userStore";
 import { ProductsPanel } from "@widgets/panels/productspanel";
+import { SalesPanel } from "@widgets/panels/salespanel";
 import { UsersPanel } from "@widgets/panels/userspanel";
 import { useNavigate } from "react-router-dom";
 
@@ -41,14 +42,19 @@ export const AdminPanel: React.FC = () => {
 
       <Tabs.Root defaultValue={isAdmin ? "users" : "products"}>
         <Tabs.List>
-          <Tabs.Trigger value="products">Товары</Tabs.Trigger>
+        <Tabs.Trigger value="products">Товары</Tabs.Trigger>
+        <Tabs.Trigger value="sales">История продаж</Tabs.Trigger>
           {isAdmin && <Tabs.Trigger value="users">Пользователи</Tabs.Trigger>}
         </Tabs.List>
 
         <Box pt="3">
           <Box>
-            <Tabs.Content value="products">
+          <Tabs.Content value="products">
               <ProductsPanel />
+            </Tabs.Content>
+
+            <Tabs.Content value="sales">
+              <SalesPanel />
             </Tabs.Content>
 
             {isAdmin && (

@@ -91,11 +91,6 @@ export const deleteProduct = async (
   }
 };
 
-interface ProductQuery {
-  sortBy?: string;
-  minPrice?: string;
-  maxPrice?: string;
-}
 
 export const getProductsBySorting = async (req: Request, res: Response) => {
   const { sortBy, minPrice, maxPrice, q } = req.query;

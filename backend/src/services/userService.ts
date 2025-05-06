@@ -3,6 +3,7 @@ import { PrismaClient } from "../generated/prisma";
 const prisma = new PrismaClient();
 
 export const getAllUsersService = async () => {
+
   return await prisma.user.findMany({
     select: {
       id: true,
@@ -13,6 +14,7 @@ export const getAllUsersService = async () => {
           roleName: true,
         },
       },
+      Cart: true,
     },
   });
 };

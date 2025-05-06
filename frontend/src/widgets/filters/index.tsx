@@ -8,7 +8,7 @@ interface FiltersProps {
 }
 
 export const Filters: React.FC<FiltersProps> = ({ onChange }) => {
-  const [value, setValue] = useState<Array<number>>([0, 20000]);
+  const [value, setValue] = useState<Array<number>>([0, 10000]);
   const [condition, setCondition] = useState<string>("new");
 
   const handlePriceChange = (newValue: Array<number>) => {
@@ -17,9 +17,10 @@ export const Filters: React.FC<FiltersProps> = ({ onChange }) => {
   };
 
   const handleConditionChange = (newCondition: string) => {
-    onChange(value, newCondition);
     setCondition(newCondition);
-  // Обновляем фильтры
+    onChange(value, newCondition);
+
+    // Обновляем фильтры
   };
 
   return (
@@ -37,7 +38,7 @@ export const Filters: React.FC<FiltersProps> = ({ onChange }) => {
           value={value}
           onValueChange={handlePriceChange}
           min={0}
-          max={20000}
+          max={10000}
           step={1}
           aria-label="Диапазон цены"
           className={styles.sliderRoot}

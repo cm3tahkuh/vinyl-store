@@ -16,8 +16,8 @@ export const CardProduct: React.FC<CardProps> = ({
   image,
 }) => {
   return (
-    <Card variant="classic">
-      <Flex direction="column" maxWidth="200px">
+    <Card style={{height: "100%"}} variant="classic">
+      <Flex direction="column" height="100%" justify="center" maxWidth="200px">
         <img
           style={{
             maxWidth: "300px",

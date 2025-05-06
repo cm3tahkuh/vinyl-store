@@ -32,6 +32,12 @@ export const registerCustomerService = async ({ login, password }: User) => {
       roleId: roleCustomer.id,
     },
   });
+
+  const createCart = await prisma.cart.create({
+    data: {
+      userId: addUser.id,
+    },
+  });
 };
 
 export const loginCustomerService = async ({ login, password }: User) => {

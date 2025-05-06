@@ -59,37 +59,44 @@ export const deleteProductService = async (id: number) => {
 };
 
 export const getProductsBySortingService = async ({
+  searchString,
   sortBy,
   minPrice,
   maxPrice,
 }: {
-  sortBy: string;
-  minPrice: number;
-  maxPrice: number;
+  searchString?: string;
+  sortBy?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }) => {
   try {
-    let orderByClause: { createdAt: "asc" | "desc" };
+    let orderByClause: { createdAt: "asc" | "desc" } = { createdAt: "asc" };
+    if (sortBy === "new") orderByClause = { createdAt: "desc" };
 
-    if (sortBy === "new") {
-      orderByClause = { createdAt: "desc" };
-    } else if (sortBy === "old") {
-      orderByClause = { createdAt: "asc" };
-    } else {
-      orderByClause = { createdAt: "asc" };
+    const whereClause: any = {};
+
+    if (typeof minPrice === "number" && typeof maxPrice === "number") {
+      whereClause.price = {
+        gte: minPrice,
+        lte: maxPrice,
+      };
+    }
+
+    if (searchString && searchString.trim() !== "") {
+      whereClause.name = {
+        contains: searchString,
+        // mode: 'insensitive',
+      };
     }
 
     const products = await prisma.product.findMany({
-      where: {
-        price: {
-          gte: minPrice,
-          lte: maxPrice,
-        },
-      },
+      where: whereClause,
       orderBy: orderByClause,
     });
+
     return products;
   } catch (error) {
-    console.log(error);
-    throw new Error("Ошибка загрузки товаров");
+    console.error(error);
+    throw new Error("Ошибка при фильтрации");
   }
 };

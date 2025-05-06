@@ -10,6 +10,7 @@ export const getAllUsers = async ({ queryKey }: QueryFunctionContext) => {
       authorization: `${token}`,
     },
   });
+  
 
   if (!response.ok) {
     throw new Error("Произошла ошибка получения пользователей");

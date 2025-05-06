@@ -98,18 +98,21 @@ interface ProductQuery {
 }
 
 export const getProductsBySorting = async (req: Request, res: Response) => {
-  const { sortBy, minPrice, maxPrice } = req.query;
+  const { sortBy, minPrice, maxPrice, q } = req.query;
 
   const sortString = sortBy?.toString() || "new";
   const min = minPrice ? Number(minPrice) : 0;
-  const max = maxPrice ? Number(maxPrice) : 100000;
+  const max = maxPrice ? Number(maxPrice) : 10000;
+  const searchString = q?.toString() || "";
 
   try {
     const products = await getProductsBySortingService({
       sortBy: sortString,
       minPrice: min,
       maxPrice: max,
+      searchString: searchString.trim(),
     });
+
     res.json(products);
   } catch (error) {
     console.error(error);

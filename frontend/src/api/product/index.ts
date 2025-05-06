@@ -7,13 +7,12 @@ export const getAllProductsByFilter = async ({
   const [, token, filters] = queryKey as [
     string,
     string,
-    { priceRange: [priceMin: number, priceMax: number]; condition: string }
+    { priceRange: [priceMin: number, priceMax: number]; condition: string, searchQuery: string }
   ];
 
-  console.log(filters);
 
   const response = await fetch(
-    `${apiConfig.products.getByFilter}?sortBy=${filters.condition}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}`,
+    `${apiConfig.products.getByFilter}?sortBy=${filters.condition}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&q=${filters.searchQuery}`,
     {
       method: "GET",
       headers: {
